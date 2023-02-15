@@ -41,6 +41,9 @@
 				inputmode="numeric"
 				use-num-modifiers
 				:label="t('polls', 'After how many days are closed polls to be archived:')" />
+			<NcCheckboxRadioSwitch :checked.sync="allowGuestChanges" type="switch">
+				{{ t('polls', 'Allow public users to reuse names to change votes') }}
+			</NcCheckboxRadioSwitch>
 		</div>
 	</div>
 </template>
@@ -98,8 +101,15 @@ export default {
 				this.writeValue({ autoArchiveOffset: value })
 			},
 		},
+		allowGuestChanges: {
+			get() {
+				return this.appSettings.allowGuestChanges
+			},
+			set(value) {
+				this.writeValue({ allowGuestChanges: value })
+			},
+		},
 	},
-
 	methods: {
 		async writeValue(value) {
 			await this.$store.commit('appSettings/set', value)

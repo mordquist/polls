@@ -38,6 +38,8 @@ use OCA\Polls\Model\Group\Group;
 use OCA\Polls\Model\User\User;
 use OCP\IUserManager;
 
+use OCA\Polls\Model\Settings\AppSettings;
+
 class SystemService {
 	private const REGEX_VALID_MAIL = '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
 	private const REGEX_PARSE_MAIL = '/(?:"?([^"]*)"?\s)?(?:<?(.+@[^>]+)>?)/';
@@ -181,7 +183,7 @@ class SystemService {
 		// get all participants
 		foreach ($this->voteMapper->findParticipantsByPoll($share->getPollId()) as $vote) {
 			if ($vote->getUserId()) {
-				if ($userName === strtolower(trim($vote->getUserId()))) {
+				if (!AppSettings::SETTING_ALLOW_GUEST_CHANGES && $userName === strtolower(trim($vote->getUserId()))) {
 					throw new InvalidUsernameException;
 				}
 			}
@@ -190,8 +192,8 @@ class SystemService {
 		// get all shares for this poll
 		foreach ($this->shareMapper->findByPoll($share->getPollId()) as $share) {
 			if ($share->getUserId() && $share->getType() !== Circle::TYPE) {
-				if ($userName === strtolower(trim($share->getUserId()))
-					|| $userName === strtolower(trim($share->getDisplayName()))) {
+				if ( !AppSettings::SETTING_ALLOW_GUEST_CHANGES && ($userName === strtolower(trim($share->getUserId()))
+					|| $userName === strtolower(trim($share->getDisplayName())))) {
 					throw new InvalidUsernameException;
 				}
 			}

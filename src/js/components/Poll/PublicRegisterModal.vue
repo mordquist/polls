@@ -34,6 +34,8 @@
 						focus
 						@submit="submitRegistration" />
 
+					<h2>{{ t('polls', allowGuestChanges) }}</h2>
+
 					<InputDiv v-if="share.publicPollEmail !== 'disabled'"
 						v-model="emailAddress"
 						class="section__email"
@@ -138,6 +140,7 @@ export default {
 			share: (state) => state.share,
 			privacyUrl: (state) => state.appSettings.usePrivacyUrl,
 			imprintUrl: (state) => state.appSettings.useImprintUrl,
+			allowGuestChanges: (state) => state.appSettings.allowGuestChanges,
 		}),
 
 		registrationIsValid() {

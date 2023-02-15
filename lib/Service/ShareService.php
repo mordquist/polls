@@ -48,6 +48,8 @@ use OCP\IUserSession;
 use OCP\Security\ISecureRandom;
 use Psr\Log\LoggerInterface;
 
+use OCA\Polls\Model\Settings\AppSettings;
+
 class ShareService {
 	/** @var Acl */
 	private $acl;
@@ -282,15 +284,32 @@ class ShareService {
 		$userId = $this->generatePublicUserId();
 
 		if ($this->share->getType() === Share::TYPE_PUBLIC) {
-			// Create new external share for user, who entered the poll via public link,
-			// prevent invtation sending, when no email address is given
-			$this->createNewShare(
-				$this->share->getPollId(),
-				$this->userService->getUser(Share::TYPE_EXTERNAL, $userId, $userName, $emailAddress, $language, $language, $timeZone),
-				!$emailAddress,
-				$timeZone
-			);
-			$this->eventDispatcher->dispatchTyped(new ShareRegistrationEvent($this->share));
+			$share_exists = false;
+			// return existing share for public user
+			if (AppSettings::SETTING_ALLOW_GUEST_CHANGES) {
+				foreach ($this->shareMapper->findByPoll($this->share->getPollId()) as $share) {
+					if ($share->getUserId() && $share->getType()) {
+						if ( !AppSettings::SETTING_ALLOW_GUEST_CHANGES && ($userName === strtolower(trim($share->getUserId()))
+							|| $userName === strtolower(trim($share->getDisplayName())))) {
+							//throw new InvalidUsernameException;
+							$this->share = $share;
+							$share_exists = true;
+						}
+					}
+				}
+			}
+
+			if(!$share_exists) {
+				// Create new external share for user, who entered the poll via public link,
+				// prevent invtation sending, when no email address is given
+				$this->createNewShare(
+					$this->share->getPollId(),
+					$this->userService->getUser(Share::TYPE_EXTERNAL, $userId, $userName, $emailAddress, $language, $language, $timeZone),
+					!$emailAddress,
+					$timeZone
+				);
+				$this->eventDispatcher->dispatchTyped(new ShareRegistrationEvent($this->share));
+			}
 		} elseif ($this->share->getType() === Share::TYPE_EMAIL
 				|| $this->share->getType() === Share::TYPE_CONTACT) {
 			// Convert email and contact shares to external share, if user registers

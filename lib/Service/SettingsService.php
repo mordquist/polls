@@ -67,5 +67,6 @@ class SettingsService {
 		$this->appSettings->setStringSetting(AppSettings::SETTING_PRIVACY_URL, $settingsArray[AppSettings::SETTING_PRIVACY_URL]);
 		$this->appSettings->setStringSetting(AppSettings::SETTING_IMPRINT_URL, $settingsArray[AppSettings::SETTING_IMPRINT_URL]);
 		$this->appSettings->setStringSetting(AppSettings::SETTING_DISCLAIMER, $settingsArray[AppSettings::SETTING_DISCLAIMER]);
+		$this->appSettings->setBooleanSetting(AppSettings::SETTING_ALLOW_GUEST_CHANGES, $settingsArray[AppSettings::SETTING_ALLOW_GUEST_CHANGES]);
 	}
 }

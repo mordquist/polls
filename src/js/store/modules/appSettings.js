@@ -50,6 +50,7 @@ const defaultAppSettings = () => ({
 	pollCreationGroups: [],
 	pollDownloadGroups: [],
 	showMailAddressesGroups: [],
+	allowGuestChanges: false,
 })
 
 const namespaced = true

@@ -56,6 +56,8 @@ class AppSettings implements JsonSerializable {
 	public const SETTING_IMPRINT_URL = 'imprintUrl';
 	public const SETTING_DISCLAIMER = 'disclaimer';
 
+	public const SETTING_ALLOW_GUEST_CHANGES = 'allowGuestChanges';
+
 
 	/** @var IConfig */
 	private $config;
@@ -230,6 +232,7 @@ class AppSettings implements JsonSerializable {
 			'useImprintUrl' => $this->getUseImprintUrl(),
 			'defaultPrivacyUrl' => $this->config->getAppValue('theming', 'privacyUrl'),
 			'defaultImprintUrl' => $this->config->getAppValue('theming', 'imprintUrl'),
+			self::SETTING_ALLOW_GUEST_CHANGES => $this->getBooleanSetting(self::SETTING_ALLOW_GUEST_CHANGES),
 		];
 	}
 
